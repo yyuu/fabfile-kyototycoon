@@ -28,22 +28,30 @@ class LazyAttributeDictionary(dict):
 
 env.user = 'deploy'
 opt = LazyAttributeDictionary(env)
-opt.prefix = (lambda: os.path.join('/u/apps/kyototycoon', re.findall('(?:[0-9]+\.)*[0-9]+', opt.kt_archive)[0]))
+opt.prefix = (lambda: os.path.join('/u/apps/kyototycoon', re.findall('(?:[0-9]+\.)*[0-9]+', opt.archive)[0]))
 opt.target = os.path.realpath('./target')
 ## kyotocabinet
 opt.kc_archive = (lambda: glob.glob('kyotocabinet-*.tar.gz')[-1])
 opt.kc_extracted = (lambda: os.path.splitext(os.path.splitext(opt.kc_archive)[0])[0])
 opt.kc_patches = (lambda: opt.kc_extracted + '.patches')
 ## kyototycon
-opt.kt_archive = (lambda: glob.glob('kyototycoon-*.tar.gz')[-1])
-opt.kt_extracted = (lambda: os.path.splitext(os.path.splitext(opt.kt_archive)[0])[0])
-opt.kt_patches = (lambda: opt.kt_extracted + '.patches')
+opt.archive = (lambda: glob.glob('kyototycoon-*.tar.gz')[-1])
+opt.extracted = (lambda: os.path.splitext(os.path.splitext(opt.archive)[0])[0])
+opt.patches = (lambda: opt.extracted + '.patches')
 
 @task
 def setup():
+  clean()
   build()
   upload()
   symlink()
+
+@task
+@runs_once
+def clean():
+  local("""
+    rm -rf %(kc_extracted)s %(extracted)s %(target)s
+  """ % opt)
 
 @task
 @runs_once
@@ -75,13 +83,13 @@ def build_kyotocabinet():
 @task
 def build_kyototycoon():
   local("""
-    test -f %(kt_archive)s && ( rm -rf %(kt_extracted)s; tar zxf %(kt_archive)s )
+    test -f %(archive)s && ( rm -rf %(extracted)s; tar zxf %(archive)s )
   """ % opt)
-  with lcd(opt.kt_extracted):
+  with lcd(opt.extracted):
 ## patch
     local("""
-      if test -d %(kt_patches)s; then
-        opt QUILT_PATCHES=%(kt_patches)s quilt push -a
+      if test -d %(patches)s; then
+        opt QUILT_PATCHES=%(patches)s quilt push -a
       fi
     """ % opt)
 ## configure
