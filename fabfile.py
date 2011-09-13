@@ -107,7 +107,7 @@ def upload():
     test -d %(prefix)s || mkdir -p %(prefix)s
   """ % opt)
   local_dir = os.path.realpath(opt.target + os.path.sep + opt.prefix) + os.path.sep
-  project.rsync_project(local_dir=local_dir, remote_dir=opt.prefix, delete=True, extra_opts='--chmod=Du+rwx,Dgo+rx,Fu+rw,Fgo+r')
+  project.rsync_project(local_dir=local_dir, remote_dir=opt.prefix, delete=True, extra_opts='--chmod=Du+rwx,Dgo+rx,Fu+rw,Fgo+r --links')
 
 @task
 def symlink():
