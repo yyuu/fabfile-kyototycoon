@@ -1,0 +1,9 @@
+/.*.swo
+/.*.swp
+/*.pyc
+/*.pyo
+/kyotocabinet-*
+/kyototycoon-*
+/target
+!/kyotocabinet-*.tar.gz
+!/kyototycoon-*.tar.gz
