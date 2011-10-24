@@ -9,7 +9,7 @@ Fabric recipe to install Kyoto Tycoon.
 
 * Fabric
 
-You may need other packages from Kyoto Tycoon.
+You may also need to install other dependencies to satisfy requirements of Kyoto Tycoon.
 
 
 ## Operations
